@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Masjidul Abrar|Salah Timer</title>
+    <link rel="stylesheet" href="src/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="salah-time-app-wrapper">
+        <div class="salah-time-app">
+          <h1><span>Masjidul Abrar</span></h1>
+          <button
+            type="button"
+            class="btn btn-dark"
+            id="current-location-button"
+          >
+            Current Location
+          </button>
+          
+          <h1>Salah Times</h1>
+          <div class="full-date">
+            <span class="date" id="date"></span>
+            <span class="day" id="day"></span>
+            <span class="hijri-date" id="hijri-date"></span>
+          </div>
+          <div class="grid-container mt-3">
+            <div class="row justify-content-center">
+              <div class="col-4">
+                Fajr
+                <div class="emoji">🌄</div>
+                <div class="fajr-time" id="fajr"></div>
+              </div>
+
+              <div class="col-4">
+                Sunrise
+                <div class="emoji">🌅</div>
+                <div class="sunrise-time" id="sunrise"></div>
+              </div>
+              <div class="col-4">
+                Dhuhr
+                <div class="emoji">☀</div>
+                <div class="dhuhr-time" id="dhuhr"></div>
+              </div>
+
+              <div class="col-4">
+                Asr
+                <div class="emoji">⛺</div>
+                <div class="asr-time" id="asr"></div>
+              </div>
+              <div class="col-4">
+                Maghrib
+                <div class="emoji">🌇</div>
+                <div class="maghrib-time" id="maghrib"></div>
+              </div>
+              <div class="col-4">
+                Isha
+                <div class="emoji">🌆</div>
+                <div class="isha-time" id="isha"></div>
+              </div>
+              <div class="col-4">
+                Midnight
+                
+                <div class="midnight-time" id="midnight"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer>
+      Coded by <strong>Amira Fareh</strong> and
+      <a
+        href="https://github.com/AmiraFareh/vanilla-salah-time-app"
+        target="
+        "
+        >open-sourced on Github</a
+      >
+    </footer>
+  </body>
+  <script src="src/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Create popup container
+        let popup = document.createElement('div');
+        popup.id = 'loginPopup';
+        popup.style.display = 'none';
+        popup.style.position = 'fixed';
+        popup.style.zIndex = '1';
+        popup.style.left = '0';
+        popup.style.top = '0';
+        popup.style.width = '100%';
+        popup.style.height = '100%';
+        popup.style.overflow = 'auto';
+        popup.style.backgroundColor = 'rgba(0,0,0,0.4)';
+        popup.style.paddingTop = '60px';
+    
+        // Create popup content
+        let popupContent = document.createElement('div');
+        popupContent.style.backgroundColor = 'rgb(173, 83, 137)';
+        popupContent.style.margin = '5% auto';
+        popupContent.style.padding = '20px';
+        popupContent.style.border = '1px solid rgb(60, 16, 83)';
+        popupContent.style.width = '80%';
+        popupContent.style.maxWidth = '500px';
+        popupContent.style.boxShadow = '0px 0px 10px 0px rgba(0,0,0,0.2)';
+    
+        // Create close button
+        let closeButton = document.createElement('span');
+        closeButton.innerHTML = '&times;';
+        closeButton.style.color = 'rgb(60, 16, 83)';
+        closeButton.style.float = 'right';
+        closeButton.style.fontSize = '28px';
+        closeButton.style.fontWeight = 'bold';
+        closeButton.style.cursor = 'pointer';
+        closeButton.onclick = function() {
+            popup.style.display = 'none';
+        };
+    
+        // Create form
+        let form = document.createElement('form');
+        form.id = 'loginForm';
+    
+        // Add form fields
+        let fields = [
+            {label: 'Are you a member of Masjidul Abrar?', type: 'radio', name: 'memberStatus', options: ['Yes', 'No']},
+            {label: 'Gender:', type: 'radio', name: 'gender', options: ['Male', 'Female']},
+            {label: 'Name:', type: 'text', name: 'name'},
+            {label: 'Phone Number:', type: 'text', name: 'phone'},
+            {label: 'Email:', type: 'email', name: 'email'},
+            {label: 'Address:', type: 'text', name: 'address'}
+        ];
+    
+        fields.forEach(field => {
+            let label = document.createElement('label');
+            label.textContent = field.label;
+            form.appendChild(label);
+    
+            if (field.type === 'radio') {
+                field.options.forEach(option => {
+                    let input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = field.name;
+                    input.value = option;
+                    input.required = true;
+                    form.appendChild(input);
+                    form.appendChild(document.createTextNode(option));
+                    form.appendChild(document.createElement('br'));
+                });
+            } else {
+                let input = document.createElement('input');
+                input.type = field.type;
+                input.name = field.name;
+                input.required = true;
+                input.style.width = '100%';
+                input.style.padding = '8px';
+                input.style.margin = '8px 0';
+                input.style.boxSizing = 'border-box';
+                form.appendChild(input);
+            }
+        });
+    
+        // Add submit button
+        let submitButton = document.createElement('button');
+        submitButton.type = 'submit';
+        submitButton.textContent = 'Submit';
+        form.appendChild(submitButton);
+    
+        // Form submission handler
+        form.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from submitting normally
+    
+            const formData = new FormData(form);
+            
+            // Submit the form data using fetch
+            fetch('https://formbold.com/s/3KgBl', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(data => {
+                console.log('Form submission successful:', data);
+                // Close the popup after successful submission
+                popup.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+                // Handle errors here, e.g., show an error message to the user
+            });
+        });
+    
+        // Append elements to popup content
+        popupContent.appendChild(closeButton);
+        popupContent.appendChild(document.createElement('h2')).textContent = 'Login';
+        popupContent.appendChild(form);
+    
+        // Append popup content to popup container
+        popup.appendChild(popupContent);
+    
+        // Append popup to body
+        document.body.appendChild(popup);
+    
+        // Display the popup after the page loads
+        setTimeout(() => {
+            popup.style.display = 'block';
+        }, 1000); // 1 second delay for the popup
+    });
+    </script>
+    <script>
+      // Example using a simple encryption method (not secure for production)
+let message = 'Hello, World!';
+let passphrase = 'secret';
+
+let encryptedMessage = btoa(unescape(encodeURIComponent(message + passphrase)));
+let decryptedMessage = decodeURIComponent(escape(atob(encryptedMessage)));
+
+console.log('Encrypted:', encryptedMessage);
+console.log('Decrypted:', decryptedMessage);
+
+    </script>
+    
+</html>
