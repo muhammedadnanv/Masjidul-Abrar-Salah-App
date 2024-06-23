@@ -1,11 +1,10 @@
-Certainly! Here's a simplified `README.md` focusing on the essential features of the Masjidul Abrar Salah App, which includes user authentication (login) and viewing prayer times:
-
+![Masjidul Abrar Salah App](https://i.ibb.co/WkQkTp4/Screenshot-2024-06-23-111513.png);
 ```markdown
 # Masjidul Abrar Salah App
 
 Welcome to the Masjidul Abrar Salah App repository! This app allows users to log in and view prayer times based on their location.
 
-![Masjidul Abrar Salah App](https://i.ibb.co/WkQkTp4/Screenshot-2024-06-23-111513.png);
+
 ## Features
 
 - **User Authentication**: Secure login functionality allowing registered users to log in and access prayer times.
